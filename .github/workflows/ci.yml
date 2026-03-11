@@ -20,14 +20,19 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
-          source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
-        env:
-          NUGET_AUTH_TOKEN: ${{ secrets.TOKEN_PAT }}
- 
-      - name: Build & Test
-        run: |
-          dotnet restore MFE.Inicio/MFE.Inicio.csproj
-          dotnet build MFE.Inicio/MFE.Inicio.csproj -c Release
+          
+      - name: Add GitHub NuGet source
+        run: dotnet nuget add source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json \
+             --name github \
+             --username ${{ github.repository_owner }} \
+             --password ${{ secrets.TOKEN_PAT }} \
+             --store-password-in-clear-text
+
+      - name: Restore
+        run: dotnet restore MFE.Inicio/MFE.Inicio.csproj
+
+      - name: Build
+        run: dotnet build MFE.Inicio/MFE.Inicio.csproj -c Release --no-restore
  
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
