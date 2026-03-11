@@ -47,6 +47,8 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          build-args: |
+            TOKEN_PAT=${{ secrets.TOKEN_PAT }}
  
       # Avisa al repo de infraestructura que hay una nueva versión
       - name: Trigger infrastructure deploy
