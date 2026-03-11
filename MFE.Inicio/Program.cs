@@ -36,8 +36,4 @@ app.MapRazorComponents<App>()
 
 app.MapHealthChecks("/health");
 
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
-
-
 app.Run();
