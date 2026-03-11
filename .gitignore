@@ -69,7 +69,6 @@ coverage/
 *.snupkg
 packages/
 .nuget/packages/
-nuget.config
 
 # Secrets
 secrets.json
