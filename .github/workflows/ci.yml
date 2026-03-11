@@ -55,7 +55,7 @@ jobs:
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.INFRA_DISPATCH_TOKEN }}
-          repository: TU_USUARIO/mfe-infrastructure
-          event-type: mfe-ventas-updated
+          repository: cesarortiz93/mfe-infrastructure
+          event-type: mfe-inicio-updated
           client-payload: |
-            { "version": "${{ github.sha }}", "mfe": "ventas" }
+            { "version": "${{ github.sha }}", "mfe": "inicio" }
