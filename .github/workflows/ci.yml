@@ -1,0 +1,56 @@
+# .github/workflows/ci.yml (en mfe-inicio)
+name: CI/CD - MFE Inicio
+ 
+on:
+  push:
+    branches: [ main ]
+ 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/mfe-inicio
+ 
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - uses: actions/checkout@v4
+ 
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+          source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.TOKEN_PAT }}
+ 
+      - name: Build & Test
+        run: |
+          dotnet restore MFE.Inicio/MFE.Inicio.csproj
+          dotnet build MFE.Inicio/MFE.Inicio.csproj -c Release
+ 
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.TOKEN_PAT }}
+ 
+      - name: Build & Push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+ 
+      # Avisa al repo de infraestructura que hay una nueva versión
+      - name: Trigger infrastructure deploy
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.INFRA_DISPATCH_TOKEN }}
+          repository: TU_USUARIO/mfe-infrastructure
+          event-type: mfe-ventas-updated
+          client-payload: |
+            { "version": "${{ github.sha }}", "mfe": "ventas" }
