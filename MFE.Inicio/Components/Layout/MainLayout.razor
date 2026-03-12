@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager Nav
+@inject IJSRuntime JS
 
 <div class="page">
     <div class="sidebar bg-gray-100 border-r-1 border-gray-200">
@@ -12,8 +14,36 @@
     </main>
 </div>
 
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
-</div>
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Notifica al Shell la ruta actual al cargar
+            await NotifyParent(Nav.ToBaseRelativePath(Nav.Uri));
+
+            // Escucha cambios de ruta dentro del MFE
+            Nav.LocationChanged += OnLocationChanged;
+        }
+    }
+
+    private async void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        var relativePath = Nav.ToBaseRelativePath(e.Location);
+        await NotifyParent(relativePath);
+    }
+
+    private async Task NotifyParent(string path)
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("notifyShellNavigation", path);
+        }
+        catch { /* ignorar si no está en iframe */ }
+    }
+
+    public void Dispose()
+    {
+        Nav.LocationChanged -= OnLocationChanged;
+    }
+}
