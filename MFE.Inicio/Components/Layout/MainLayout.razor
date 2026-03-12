@@ -2,13 +2,13 @@
 @inject NavigationManager Nav
 @inject IJSRuntime JS
 
-<div class="page">
-    <div class="sidebar bg-gray-100 border-r-1 border-gray-200">
+<div class="flex w-full h-full">
+    <div class="w-2/12 bg-gray-100 border-r-1 border-gray-200">
         <NavMenu />
     </div>
 
-    <main>
-        <article class="content px-4">
+    <main class="w-10/12 flex">
+        <article class="flex-column w-full px-4">
             @Body
         </article>
     </main>
