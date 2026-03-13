@@ -1,0 +1,22 @@
+﻿<span class='rounded @(Type != "default" ? @GetBadge(Type) : "bg-gray-400 text-black") px-3 py-1 text-xs'>
+    @Content
+</span>
+
+@code {
+    [Parameter, EditorRequired] public  string Content { get; set; }
+    [Parameter] public string? Type { get; set; } = "default";
+
+    private string GetBadge(string value)
+    {
+        string valueString = value.ToLower();
+        switch (valueString)
+        {
+            case "success":
+                return "bg-green-300/20 text-green-600";
+            case "danger":
+                return "bg-red-300/20 text-red-600";
+            default:
+                return "bg-gray-400 text-black";
+        }
+    }
+}

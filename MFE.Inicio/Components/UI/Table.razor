@@ -1,0 +1,50 @@
+﻿<div class="w-full bg-white border-2 border-gray-100 shadow-md flex-col px-4 rounded">
+    <span class="text-lg text-green-600 mt-2 font-bold">@Title</span>
+    <table class="table mt-2 p-2">
+        <thead class="bg-gray-200 px-2 rounded-md">
+            <tr class="text-green-600 font-bold rounded-md">
+                <th class="text-start">MFE</th>
+                <th class="text-start">URL</th>
+                <th class="text-start">Current</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var _row in _rows)
+            {
+                <tr>
+                    <td>@_row.MFE</td>
+                    <td>@_row.URL</td>
+                    <td>@GetCurrent(_row.URL)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Title { get; set; }
+    [Parameter, EditorRequired] public string Current { get; set; }
+
+    private List<Rows> _rows = new();
+
+    protected override void OnInitialized()
+    {
+        _rows = new List<Rows>
+        {
+            new() { MFE = "MFE.Inicio", URL = "mfe-inicio" },
+            new() { MFE = "MFE.Portafolio", URL = "mfe-portafolio" },
+            new() { MFE = "MFE.Siniestros", URL = "mfe-siniestros" },
+        };
+    }
+
+    public string GetCurrent(string url)
+    {
+        return url == Current ? "✓" : string.Empty;
+    }
+
+    public class Rows
+    {
+        public string MFE { get; set; }
+        public string URL { get; set; }
+    }
+}

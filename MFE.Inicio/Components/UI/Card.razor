@@ -1,0 +1,14 @@
+﻿<div class="w-full bg-white border-2 border-gray-100 rounded-md p-3 flex flex-col">
+    <div class="flex justify-content-between">
+        <span class="font-bold text-sm">@title</span>
+    </div>
+    <div class="flex w-full">
+        @Children
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string title { get; set; } = String.Empty;
+    [Parameter] public RenderFragment? Children { get; set; }
+
+}
