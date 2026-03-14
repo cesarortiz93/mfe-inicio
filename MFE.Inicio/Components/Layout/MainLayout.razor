@@ -19,10 +19,20 @@
     {
         if (firstRender)
         {
-            // Notifica al Shell la ruta actual al cargar
-            await NotifyParent(Nav.ToBaseRelativePath(Nav.Uri));
+            Console.WriteLine($"[MFE] OnAfterRenderAsync firstRender=true, URI={Nav.Uri}");
+           
+            try
+            {
+                var path = Nav.ToBaseRelativePath(Nav.Uri);
+                Console.WriteLine($"[MFE] Llamando notifyShellNavigation con path={path}");
+                await JS.InvokeVoidAsync("notifyShellNavigation", path);
+                Console.WriteLine($"[MFE] notifyShellNavigation ejecutado OK");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[MFE] Error al invocar JS: {ex.Message}");
+            }
 
-            // Escucha cambios de ruta dentro del MFE
             Nav.LocationChanged += OnLocationChanged;
         }
     }
@@ -30,6 +40,7 @@
     private async void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
         var relativePath = Nav.ToBaseRelativePath(e.Location);
+        Console.WriteLine($"[MFE] LocationChanged: {relativePath}");
         await NotifyParent(relativePath);
     }
 
@@ -39,7 +50,10 @@
         {
             await JS.InvokeVoidAsync("notifyShellNavigation", path);
         }
-        catch { /* ignorar si no está en iframe */ }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[MFE] Error NotifyParent: {ex.Message}");
+        }
     }
 
     public void Dispose()
