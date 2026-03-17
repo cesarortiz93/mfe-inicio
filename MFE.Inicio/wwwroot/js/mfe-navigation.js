@@ -19,7 +19,7 @@ window.notifyShellNavigation = function (path) {
     // Notificar la ruta inicial
     setTimeout(function () {
         window.notifyShellNavigation(lastPath);
-    }, 500);
+    }, 300);
 
     setInterval(function () {
         if (window.location.pathname !== lastPath) {
